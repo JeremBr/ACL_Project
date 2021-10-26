@@ -25,3 +25,11 @@ avec x qui a pour valeur T+CT c'est à dire le temps que ça arrivera
 Dans l'exemple, on voit que le product 1 arrivera à 1+3
 donc la clause (4) est True, il peut pas y en avoir d'autres de true
 (réfléchir à comment faire)
+
+
+
+D'autres clauses à faire:
+
+- Le runner quand il pose produit, il repart direct cet esclave
+- Que tous les produits des orders soient acheminés
+

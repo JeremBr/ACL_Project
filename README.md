@@ -3,15 +3,16 @@
 ## BROUILLON
 ## A METTRE EN ANGLAIS
 
-R_T_P_C
+R_T_P et P_TC
 
 Position P à l'instant T du runner R
-C coût en temps de la position précédente jusqu'à celle-ci
+Product P qui arrive à TC = T+C (temps quand il arrive sur conveyor puis temps qu'il met dessus)
+
 
 On test toutes les possibilités pour runner i (et pour tous les runners, puis pour tous ceux qui restent)
 
 
-2 Trucs à prendre en compte:
+3 Trucs à prendre en compte:
 
   - à chaque fois qu'on détermine où le runner va aller, qu'il y est pas déjà quelqu'un
 
@@ -23,25 +24,20 @@ On test toutes les possibilités pour runner i (et pour tous les runners, puis p
 
 
   - que ça n'arrive pas en même temps au point de packaging (fin du conveyor)
-
-  C'est à dire qu'il faut faire des soft clauses (x) à chaque fois qu'on pose un product
-
-  avec x qui a pour valeur T+CT c'est à dire le temps que ça arrivera
-
-  (CT le Conveyor Time)
-
-  Dans l'exemple, on voit que le product 1 arrivera à 1+3
-
-  donc la clause (4) est True, il peut pas y en avoir d'autres de true
-
-  (réfléchir à comment faire)
+  
+  donc pour ça on utilise nos variables P_TC pour faire clauses : Λ(V(-P_TC,-p_TC))
+  
+  Autrement dit que deux product different n'arrive pas à TC égale
+  
+  et on rajoute clauses pour dire que tous les products sont acheminés, c'est à dire:  Λ(V(P_TC,P_tc))
+  
+  Autrement dit on check que le product P soit acheminé n'importe quand
+  
 
 
----
-D'autres clauses à faire:
 
-- Le runner quand il pose produit, il repart direct cet esclave, cest a dire IL EST TJRS ACTIF, il a pas moment de répis, il faut bien faire des clauses sur ca
-- Que tous les produits des orders soient acheminés
+  - Le runner quand il pose produit, il repart direct cet esclave, cest a dire IL EST TJRS ACTIF, il a pas moment de répis, il faut bien faire des clauses sur ca
+
 
 
 ---

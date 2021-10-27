@@ -40,6 +40,6 @@ On test toutes les possibilités pour runner i (et pour tous les runners, puis p
 ---
 D'autres clauses à faire:
 
-- Le runner quand il pose produit, il repart direct cet esclave
+- Le runner quand il pose produit, il repart direct cet esclave, cest a dire IL EST TJRS ACTIF, il a pas moment de répis, il faut bien faire des clauses sur ca
 - Que tous les produits des orders soient acheminés
 

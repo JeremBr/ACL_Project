@@ -44,5 +44,5 @@ On test toutes les possibilités pour runner i (et pour tous les runners, puis p
 
 DONE:
 - Runners arrivent pas en même temps au même endroit
-- 
+- Products bien arrivé au packaging area, normalement c bon
 

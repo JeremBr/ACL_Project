@@ -40,18 +40,19 @@ class Runner:
 #CE QUI PERMET DE DEFINIR VARIABLES
 #ATTENTION SI ON RAJOUTE UN PARAMETRE AUX VARIABLES IL FAUT MODIF PARTOUT DANS LE CODE
 def p(r,t,p):
-	return totalRunners*r + t + p*totalProducts 
-	#CEST PAS LES BONS CALCULS DE POSSIBILITES, car on va avoir croisement 
-	# => ON PEUT RAJOUTER UNE VALEUR ARBITRAIRE POUR CELA, genre +1000 COMME CA ON EST SUR OKLM, ca changera pas le nombre de VARIABLES, FAUDRA JUSTE SOUSTRAIRE QUAND RECUP
+	return r*totalRunners + t + p*totalProducts 
+	#CEST PTET PAS LES BONS CALCULS DE POSSIBILITES
 
 def v(o,p,tc):
-	return o*totalOrders+p*totalProducts + tc #CEST PAS LES BONS CALCULS DE POSSIBILITES, mais dans l'idee
+	return o*totalOrders+p*totalProducts + tc +1000
+	#CEST PTET PAS LES BONS CALCULS DE POSSIBILITES
+	#JAI RAJOUTE 1000 POUR PAS QUE CA SE CROISE avec les vars de runners
 
 
 
 
 
-
+#OK
 #CE QUI PERMET DE RECUP DATA DEPUIS LE FILE DONNE (python3 proj1.py < fichier.wps)
 def getData():
 
@@ -63,7 +64,7 @@ def getData():
 	totalProducts=int(L[1])
 	runnersPos=L[2].replace(" ","")
 	movTime=L[3:3+totalProducts]
-	movTimeConv=L[3+totalProducts:4+totalProducts].replace(" ","")
+	movTimeConv=L[3+totalProducts:4+totalProducts][0].replace(" ","")
 	totalOrders=int(''.join(L[4+totalProducts:5+totalProducts]))
 	products=L[5+totalProducts:5+totalProducts+totalOrders]
 
@@ -97,6 +98,7 @@ def packaging_clauses():
 	clausesList=[]
 
 
+	#OK
 	#orderList est la liste des orders avec chacun des products requis
 	#on a donc orderList=[[1,2,3],[1,4]] par exemple
 	orderList=[]
@@ -109,6 +111,7 @@ def packaging_clauses():
 		orderList.append(L)
 
 
+	#OK
 	#timeList est la liste des temps
 	#on a donc timeList=[[1,5,3,3],[5,1,3,2],[3,3,1,2],[3,2,2,1]] par exemple
 	timeList=[]
@@ -121,7 +124,7 @@ def packaging_clauses():
 		timeList.append(L)
 
 
-
+	#OK
 	#temps maximal dans le pire des cas, pour avoir un intervalle, sachant que temps conveyor est forcement plus grand que temps runners
 	maxTime=0
 	timeConvList=[]
@@ -132,7 +135,7 @@ def packaging_clauses():
 
 	for j in range(len(orderList)):
 		for k in range(len(orderList[j])):
-			maxTime+=(timeConvList[k]*orderList[j][k])
+			maxTime+=timeConvList[k]
 
 	maxTime = maxTime - (maxTime//4)
 
@@ -232,9 +235,9 @@ def packaging_clauses():
 	# nombre de produit à package (exemple 1: 6 clauses)
 
 
-	# x) Que ca n'arrive pas en meme temps au point de packaging
+	# x) Que ca n'arrive pas en meme temps au point de packaging area
 	for i in range(len(orderList)):
-		for j in range(len(1,orderList[i])):
+		for j in range(1,len(orderList[i])):
 			for k in range(maxTime): #mettre valeure plus grande?
 				clausesList.append([-v(i+1,orderList[i][j-1],k),-v(i+1,orderList[i][j],k)])
 
@@ -272,9 +275,6 @@ def solve():
 
 
 	#def read_jsp():
-
-
-	
 
 
 

@@ -37,6 +37,8 @@ class Runner:
 		self.__cost=cost
 
 
+
+
 #CE QUI PERMET DE DEFINIR VARIABLES
 #ATTENTION SI ON RAJOUTE UN PARAMETRE AUX VARIABLES IL FAUT MODIF PARTOUT DANS LE CODE
 def p(r,t,p):
@@ -52,7 +54,7 @@ def v(o,p,tc):
 
 
 
-#OK
+#OK------------
 #CE QUI PERMET DE RECUP DATA DEPUIS LE FILE DONNE (python3 proj1.py < fichier.wps)
 def getData():
 
@@ -69,6 +71,7 @@ def getData():
 	products=L[5+totalProducts:5+totalProducts+totalOrders]
 
 	return totalRunners,totalProducts,runnersPos,movTime,movTimeConv,totalOrders,products
+#--------------
 
 
 
@@ -98,7 +101,7 @@ def packaging_clauses():
 	clausesList=[]
 
 
-	#OK
+	#OK------------
 	#orderList est la liste des orders avec chacun des products requis
 	#on a donc orderList=[[1,2,3],[1,4]] par exemple
 	orderList=[]
@@ -109,9 +112,10 @@ def packaging_clauses():
 			L.append(int(order[j]))
 
 		orderList.append(L)
+	#--------------
 
 
-	#OK
+	#OK------------
 	#timeList est la liste des temps
 	#on a donc timeList=[[1,5,3,3],[5,1,3,2],[3,3,1,2],[3,2,2,1]] par exemple
 	timeList=[]
@@ -122,9 +126,10 @@ def packaging_clauses():
 			L.append(int(time[j]))
 
 		timeList.append(L)
+	#--------------
 
 
-	#OK
+	#OK------------
 	#temps maximal dans le pire des cas, pour avoir un intervalle, sachant que temps conveyor est forcement plus grand que temps runners
 	maxTime=0
 	timeConvList=[]
@@ -138,6 +143,7 @@ def packaging_clauses():
 			maxTime+=timeConvList[k]
 
 	maxTime = maxTime - (maxTime//4)
+	#--------------
 
 
 
@@ -203,15 +209,15 @@ def packaging_clauses():
 
 
 
-
+	#OK------------
 	# x) runners peuvent pas etre au meme endroit au meme moment
-	#CA C BON NE PAS TOUCHER
 	for i in range(1,totalRunners):
 		for j in range(maxTime):
 			for k in range(totalProducts):
 				clausesList.append([-p(i,j,k),-p(i+1,j,k)])
 
-	# n*t*m (pas fait expres decrire n-t-m MDR) (dans l'exemple 1 ca fait 2*9*4=64 clauses)
+	# n*t*m (pas fait expres decrire n-t-m MDR) (dans l'exemple 1 ca fait 1*9*4=36 clauses)
+	#--------------
 
 
 
@@ -223,29 +229,30 @@ def packaging_clauses():
 	# Le product P de l'order O arrive sur le conveyor à l'instant TC
 
 
+	#OK------------
 	# x) pour toutes les commandes il faut sassurer que leurs produits sont bien recu au packaging area
 	for i in range(len(orderList)):
 		for j in range(len(orderList[i])):
+			L=[]
 			for k in range(maxTime): #mettre valeure plus grande?
-				L=[]
 				L.append(v(i+1,orderList[i][j],k))
 
 			clausesList.append(L)
 
-	# nombre de produit à package (exemple 1: 6 clauses)
+	# nombre de produit à package (exemple 1: 5 clauses)
+	#--------------
 
 
+
+	#OK------------
 	# x) Que ca n'arrive pas en meme temps au point de packaging area
 	for i in range(len(orderList)):
 		for j in range(1,len(orderList[i])):
 			for k in range(maxTime): #mettre valeure plus grande?
 				clausesList.append([-v(i+1,orderList[i][j-1],k),-v(i+1,orderList[i][j],k)])
 
-	# nombre de produit à package * T (exemple 1 : 6*9=54 clauses)
-
-
-
-
+	# nombre de produit à package * T (exemple 1 : (3-1 + 2-1)*9=27 clauses)
+	#--------------
 
 
 

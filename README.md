@@ -48,11 +48,11 @@ DONE:
 - Products bien arrivé au packaging area, normalement c bon
 - Que ca n'arrive pas en meme temps au packaging area
 - Faire 'runner toujours en mouvement' (A->B)
-- 
+
 ---
 
 TO DO:
-- Finir toutes les possibilités
+- Finir la dernière implémentation, la plus chiante, qui consiste à faire les clauses selon les choix, je vais demander au prof en fait je crois qu'avec toutes les autres clauses ca de vient simple
 - Faire OUTPUT format
 - Traduction en anglais et mieux expliquer
 

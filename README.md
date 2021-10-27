@@ -1,6 +1,7 @@
 # ACL_Project
 
 ist1101360 - Jérémy Breton
+
 ist1101618 - Marc Traverso
 
 ## How does it work?

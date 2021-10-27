@@ -35,10 +35,10 @@ R_T_P and P_TC : are our special set of constraints
 
 ## Complexity
 
-- (2):
-- (3):
-- (4):
-- (5):
+number of clauses (NC):
+- (2): NC = n * t * m (n number of runners, t time, m number of products)
+- (4): NC = total product to package * T
+- (5): NC = total product to package
 
 ---
 

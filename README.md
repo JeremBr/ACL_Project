@@ -47,3 +47,9 @@ DONE:
 - Runners arrivent pas en même temps au même endroit
 - Products bien arrivé au packaging area, normalement c bon
 - Que ca n'arrive pas en meme temps au packaging area
+
+---
+
+TO DO:
+- Finir toutes les possibilités
+- Faire 'runner toujours en mouvement' (A->B)

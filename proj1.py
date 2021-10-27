@@ -203,6 +203,18 @@ def packaging_clauses():
 	# utiliser A -> B
 	# R_T_P -> R_T+CT_p  avec p le new endroit, et CT le temps de P à p
 
+	#JAI POSSIBLEMENT MAL FAIT CETTE IMPLEMENTATION PRSK IL FAIT SOMMEIL
+
+	for i in range(totalRunners):
+		L=[]
+		for j in range(maxTime):
+			for k in range(totalProducts):
+				for l in range(totalProducts):
+					if k!=l:
+						L.append(p(i+1,j+(timeList[k][l]),l+1))
+
+			L.append(-p(i+1,j,k+1))
+		clausesList.append(L)
 
 
 

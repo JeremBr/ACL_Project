@@ -1,58 +1,42 @@
 # ACL_Project
 
-## BROUILLON
-## A METTRE EN ANGLAIS
+##How does it work?
 
-R_T_P et O_P_TC
+R_T_P and O_P_TC 
 
-Position P à l'instant T du runner R
+are our special set of constraints 
 
-Product P de l'Order O qui arrive à TC = T+C (temps quand il arrive sur conveyor puis temps qu'il met dessus)
+*R_T_P*
+
+"P" reprents the position of the runner "R" at a certain moment "T".
+
+*O_P_TC*
+
+"P" represents one product from the order O which arrives at the moment "TC" = T+C (the time to get to the conveyor + the time on it)
 
 ---
-On test toutes les possibilités pour runner i (puis pour tout ceux qui restent)
 
+We test every possibility for each runner "i"
 
-3 Trucs à prendre en compte:
+---
 
-  - à chaque fois qu'on détermine où le runner va aller, qu'il y est pas déjà quelqu'un
+##3 importants aspects of this project:
 
-  C'est à dire, par exemple, si à un instant t le runner 1 se trouve à p3, il faut pas que le runner 2 arrive à ce même instant à p3
+	- everytime we path the way for a runner, we must check that no one is already there, and especially that no one is putting a product at the conveyor at the same place, otherwise a conflict can happen.
 
-  Car ça voudrait dire qu'il mette le product en même temps sur le conveyor, donc que ça arrivera en même temps
+	- we also have to check that is doesn't arrive at the same time on the point of packaging (end of the conveyor)
 
-  DONC JE REDIS, quand on détermine où va runner, qu'il y est pas déjà qlq !!
-
-
-  - que ça n'arrive pas en même temps au point de packaging (fin du conveyor)
-  
-  donc pour ça on utilise nos variables O_P_TC pour faire clauses : Λ(V(-O_P_TC,-O_p_TC))
-  
-  Autrement dit que deux product different n'arrive pas à TC égale
-  
-  et on rajoute clauses pour dire que tous les products sont acheminés, c'est à dire:  Λ(V(O_P_TC,O_P_tc))
-  
-  Autrement dit on check que le product P soit acheminé n'importe quand
-  
-
-
-
-  - Le runner quand il pose produit, il repart direct cet esclave, cest a dire IL EST TJRS ACTIF, il a pas moment de répis, il faut bien faire des clauses sur ca
-
-
+	- we have to make sure that every runners stay active without taking any pauses. 
 
 ---
 
 DONE:
-- Runners arrivent pas en même temps au même endroit
-- Products bien arrivé au packaging area, normalement c bon
-- Que ca n'arrive pas en meme temps au packaging area
-- Faire 'runner toujours en mouvement' (A->B)
+- No conflict about runners paths
+- Products arriving at the same time at the packaging area without conflict
+- Runners keep moving
 
 ---
 
 TO DO:
-- Finir la dernière implémentation, la plus chiante, qui consiste à faire les clauses selon les choix, je vais demander au prof en fait je crois qu'avec toutes les autres clauses ca de vient simple
-- Faire OUTPUT format
-- Traduction en anglais et mieux expliquer
-
+- Finish the last implementation 
+- Correct the OUTPUT Format

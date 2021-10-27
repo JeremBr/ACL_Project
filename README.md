@@ -6,9 +6,10 @@
 R_T_P et O_P_TC
 
 Position P à l'instant T du runner R
+
 Product P de l'Order O qui arrive à TC = T+C (temps quand il arrive sur conveyor puis temps qu'il met dessus)
 
-
+---
 On test toutes les possibilités pour runner i (et pour tous les runners, puis pour tous ceux qui restent)
 
 

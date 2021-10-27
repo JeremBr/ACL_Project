@@ -51,5 +51,5 @@ DONE:
 ---
 
 TO DO:
-- Correct the last implementation (the big one with every possibilities
+- Correct the last implementation (the big one with every possibilities)
 - Correct the OUTPUT Format, but we can't do it without good SAT solver

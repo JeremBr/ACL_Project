@@ -1,9 +1,6 @@
 import fileinput
 import pycosat
 
-#ATTENTION JAI MIS ACCENTS DANS LES COMMENTAIRES CA PEUT POSER SOUCIS (donc suppr les commentaires si bug UTF-8)
-
-
 
 class Runner:
 	def __init__(self,runner,initPos):
@@ -33,11 +30,10 @@ class Runner:
 
 
 
-#CE QUI PERMET DE DEFINIR VARIABLES
-#ATTENTION SI ON RAJOUTE UN PARAMETRE AUX VARIABLES IL FAUT MODIF PARTOUT DANS LE CODE
+# Creating variables
+
 def p(r,t,p):
-	return r*totalRunners + p*totalProducts +t + 1000
-	#CEST PTET PAS LES BONS CALCULS DE POSSIBILITES
+	return r*totalRunners + p*totalProducts +t+1000 #+1000 to have different variable names
 
 def v(p,tc):
 	return p*totalProducts +tc
@@ -45,7 +41,7 @@ def v(p,tc):
 
 
 #OK------------
-#CE QUI PERMET DE RECUP DATA DEPUIS LE FILE DONNE (python3 proj1.py < fichier.wps)
+# To get data from file : (python3 proj1.py < fichier.wps)
 def getData():
 
 	L=[]
@@ -65,16 +61,14 @@ def getData():
 
 
 
-#CE QUI PERMET DE METTRE OUTPUT SOUS LE BON FORMAT POUR POUVOIR METTRE DANS FICHIER (python3 proj1.py < fichier.wps > solution.txt)
+# To get output in the required format (python3 proj1.py < fichier.wps > solution.txt)
 def outputData(exemple): 
-#mettre en input de cette fonction, les values associes a ce quon obtient pour les mettres au bon format
 	
 	optTime=0
 	orderRunners=[]
 	timeConvProducts=[]
 
-	#puis mettre sous le bon format d'output
-
+	#Not done because we don't have a nice solver
 
 
 
@@ -89,16 +83,7 @@ def packaging_clauses(runnerList):
 
 
 
-
-
-
-
-
-
-
-	# 1) On ecrit toutes les possib
-
-	
+	# (1) Try all possibilities
 
 	def allClausesProduct(index,product_list):
 
@@ -115,8 +100,8 @@ def packaging_clauses(runnerList):
 			if(newTime>maxTime):
 				continue
 
-			clausesList.append([-p(index+1,newTime,newPos),v(newPos,(newTime+timeConvList[product-1]))]) #ptet rajouter ici, mais quoi?
-
+			clausesList.append([-p(index+1,newTime,newPos),v(newPos,(newTime+timeConvList[product-1]))])
+			
 			actualRunner.set_time(newTime)
 			actualRunner.set_pos(newPos)
 
@@ -129,6 +114,8 @@ def packaging_clauses(runnerList):
 
 
 
+
+
 	for i in range(totalRunners):
 		allClausesProduct(i,productList)
 
@@ -137,53 +124,54 @@ def packaging_clauses(runnerList):
 
 
 
+
+
+
 			
-
-
-
-
-	# x) runners toujours en mouvement
-	# utiliser A -> B
-	# R_T_P -> R_T+CT_p  avec p le new endroit, et CT le temps de P à p
-
-	for i in range(totalRunners):
-		L=[]
-		for j in range(maxTime):
-			for k in range(totalProducts):
-				for l in range(totalProducts):
-					if k!l:
-						L.append(p(i+1,j+(timeList[k][l]),l+1))
-
-			L.append(-p(i+1,j,k+1))
-		clausesList.append(L)
-
-
-
-
-
-
 	#OK------------
-	# x) runners peuvent pas etre au meme endroit au meme moment
+	# (2)) Runners can't be at the same position P in a time T
 	for i in range(1,totalRunners):
 		for j in range(maxTime):
 			for k in range(totalProducts):
 				clausesList.append([-p(i,j+1,k),-p(i+1,j+1,k)])
 
-	# n*t*m  (dans l'exemple 1 ca fait 1*9*4=36 clauses)
+	#--------------
+
+
+	#OK------------
+	# (3) Runners keep moving
+	# R_T_P -> R_T+t_p
+
+	for i in range(totalRunners):
+		for j in range(maxTime):
+			for k in range(totalProducts):
+				for l in range(totalProducts):
+						clausesList.append([-p(i+1,j,k+1),p(i+1,j+(timeList[k][l]),l+1)])
+
 	#--------------
 
 
 
 
-	
 
 
-	# variable O_P_TC
-	# Le product P de l'order O arrive sur le conveyor à l'instant TC
+	# variable P_TC
 
 
 	#OK------------
-	# x) pour toutes les commandes il faut sassurer que leurs produits sont bien recu au packaging area
+	# (4) Doesn't arrive in the same time at the packaging area
+	for i in range(len(orderList)):
+		for j in range(1,len(orderList[i])):
+			for k in range(maxTime):
+				clausesList.append([-v(orderList[i][j-1],k+1),-v(orderList[i][j],k+1)])
+
+	# total product to package * T 
+	# (example 1 : (3-1 + 2-1)*9=27 clauses)
+	#--------------
+
+
+	#OK------------
+	# (5) for all orders, we have to check if all products arrived in the packaging area
 	for i in range(len(orderList)):
 		for j in range(len(orderList[i])):
 			L=[]
@@ -192,21 +180,13 @@ def packaging_clauses(runnerList):
 
 			clausesList.append(L)
 
-	# nombre de produit à package (exemple 1: 5 clauses)
-	# PEUT ETRE RAJOUTER CE QUE JAI VU AVEC PROF
+	# total product to package
+	# (example 1: 5 clauses)
 	#--------------
 
 
 
-	#OK------------
-	# x) Que ca n'arrive pas en meme temps au point de packaging area
-	for i in range(len(orderList)):
-		for j in range(1,len(orderList[i])):
-			for k in range(maxTime):
-				clausesList.append([-v(orderList[i][j-1],k+1),-v(orderList[i][j],k+1)])
 
-	# nombre de produit à package * T (exemple 1 : (3-1 + 2-1)*9=27 clauses)
-	#--------------
 
 
 	print(len(clausesList))
@@ -225,14 +205,14 @@ def solve():
 
 	clauses,productList,maxTime = packaging_clauses(runnerList)
 
-	#rajouter clause en fonction de où sont les runners
+	#add clauses where the runners start
 	# for i in range(totalRunners):
 	# 	clauses.append([p(i+1,0,int(runnersPos[i]))])
 
 	sol = set(pycosat.solve(clauses))
 	
 
-	#Il va ptet falloir faire un test quand on a plusieurs product
+	
 
 	def read_product(i,j):
 		for d in range(totalProducts):
@@ -253,8 +233,9 @@ def solve():
 	for i in range(totalRunners):
 		for j in range(maxTime):
 			prd=read_product(i+1,j+1)
+
 			if prd!=None:
-				runnersMov.append([i+1,j,prd])
+			 	runnersMov.append([i+1,j,prd])
 
 
 	conveyorMov=[]
@@ -275,8 +256,8 @@ if __name__ == '__main__':
 
 
 	#OK------------
-	#orderList est la liste des orders avec chacun des products requis
-	#on a donc orderList=[[1,2,3],[1,4]] par exemple
+	#orderList is the order list with all products required
+	#example 1: orderList=[[1,2,3],[1,4]]
 	orderList=[]
 	for i in range(len(products)):
 		order=products[i].replace(" ","")
@@ -294,8 +275,8 @@ if __name__ == '__main__':
 
 
 	#OK------------
-	#timeList est la liste des temps
-	#on a donc timeList=[[1,5,3,3],[5,1,3,2],[3,3,1,2],[3,2,2,1]] par exemple
+	#timeList is the time list to move from one point to another
+	#example 1: timeList=[[1,5,3,3],[5,1,3,2],[3,3,1,2],[3,2,2,1]]
 	timeList=[]
 	for i in range(len(movTime)):
 		time=movTime[i].replace(" ","")
@@ -308,7 +289,6 @@ if __name__ == '__main__':
 
 
 	#OK------------
-	#temps maximal dans le pire des cas, pour avoir un intervalle, sachant que temps conveyor est forcement plus grand que temps runners
 	maxTime=0
 	timeConvList=[]
 	for i in range(len(movTimeConv)):
@@ -320,7 +300,7 @@ if __name__ == '__main__':
 		for k in range(len(orderList[j])):
 			maxTime+=timeConvList[k]
 
-	maxTime = maxTime - (maxTime//4)
+	maxTime = maxTime - (maxTime//3)
 	#--------------
 
 

@@ -44,9 +44,6 @@ def v(p,tc):
 
 
 
-
-
-
 #OK------------
 #CE QUI PERMET DE RECUP DATA DEPUIS LE FILE DONNE (python3 proj1.py < fichier.wps)
 def getData():
@@ -68,8 +65,6 @@ def getData():
 
 
 
-
-
 #CE QUI PERMET DE METTRE OUTPUT SOUS LE BON FORMAT POUR POUVOIR METTRE DANS FICHIER (python3 proj1.py < fichier.wps > solution.txt)
 def outputData(exemple): 
 #mettre en input de cette fonction, les values associes a ce quon obtient pour les mettres au bon format
@@ -84,8 +79,6 @@ def outputData(exemple):
 
 
 
-
-
 def packaging_clauses(runnerList):
 	'''
 	Create the clauses, and return them as a list
@@ -94,54 +87,6 @@ def packaging_clauses(runnerList):
 	clausesList=[]
 
 
-	#OK------------
-	#orderList est la liste des orders avec chacun des products requis
-	#on a donc orderList=[[1,2,3],[1,4]] par exemple
-	orderList=[]
-	for i in range(len(products)):
-		order=products[i].replace(" ","")
-		L=[]
-		for j in range(1,len(order)):
-			L.append(int(order[j]))
-
-		orderList.append(L)
-
-	productList=[]
-	for i in range(len(orderList)):
-		for j in range(len(orderList[i])):
-			productList.append(orderList[i][j])
-	#--------------
-
-
-	#OK------------
-	#timeList est la liste des temps
-	#on a donc timeList=[[1,5,3,3],[5,1,3,2],[3,3,1,2],[3,2,2,1]] par exemple
-	timeList=[]
-	for i in range(len(movTime)):
-		time=movTime[i].replace(" ","")
-		L=[]
-		for j in range(len(time)):
-			L.append(int(time[j]))
-
-		timeList.append(L)
-	#--------------
-
-
-	#OK------------
-	#temps maximal dans le pire des cas, pour avoir un intervalle, sachant que temps conveyor est forcement plus grand que temps runners
-	maxTime=0
-	timeConvList=[]
-	for i in range(len(movTimeConv)):
-		time=movTimeConv[i]
-		timeConvList.append(int(time))
-
-
-	for j in range(len(orderList)):
-		for k in range(len(orderList[j])):
-			maxTime+=timeConvList[k]
-
-	maxTime = maxTime - (maxTime//4)
-	#--------------
 
 
 
@@ -170,7 +115,8 @@ def packaging_clauses(runnerList):
 			if(newTime>maxTime):
 				continue
 
-			clausesList.append([-p(index+1,newTime,newPos),v(newPos,(newTime+timeConvList[product-1]))])
+			clausesList.append([-p(index+1,newTime,newPos),v(newPos,(newTime+timeConvList[product-1]))]) #ptet rajouter ici, mais quoi?
+
 			actualRunner.set_time(newTime)
 			actualRunner.set_pos(newPos)
 
@@ -189,6 +135,8 @@ def packaging_clauses(runnerList):
 
 
 
+
+
 			
 
 
@@ -198,14 +146,12 @@ def packaging_clauses(runnerList):
 	# utiliser A -> B
 	# R_T_P -> R_T+CT_p  avec p le new endroit, et CT le temps de P à p
 
-	#JAI POSSIBLEMENT MAL FAIT CETTE IMPLEMENTATION PRSK IL FAIT SOMMEIL
-
 	for i in range(totalRunners):
 		L=[]
 		for j in range(maxTime):
 			for k in range(totalProducts):
 				for l in range(totalProducts):
-					if k!=l:
+					if k!l:
 						L.append(p(i+1,j+(timeList[k][l]),l+1))
 
 			L.append(-p(i+1,j,k+1))
@@ -221,9 +167,9 @@ def packaging_clauses(runnerList):
 	for i in range(1,totalRunners):
 		for j in range(maxTime):
 			for k in range(totalProducts):
-				clausesList.append([-p(i,j,k),-p(i+1,j,k)])
+				clausesList.append([-p(i,j+1,k),-p(i+1,j+1,k)])
 
-	# n*t*m (pas fait expres decrire n-t-m MDR) (dans l'exemple 1 ca fait 1*9*4=36 clauses)
+	# n*t*m  (dans l'exemple 1 ca fait 1*9*4=36 clauses)
 	#--------------
 
 
@@ -323,16 +269,61 @@ def solve():
 
 
 
-
-
-
-
-
-
-    
-
-
-
 if __name__ == '__main__':
 	totalRunners,totalProducts,runnersPos,movTime,movTimeConv,totalOrders,products=getData()
+
+
+
+	#OK------------
+	#orderList est la liste des orders avec chacun des products requis
+	#on a donc orderList=[[1,2,3],[1,4]] par exemple
+	orderList=[]
+	for i in range(len(products)):
+		order=products[i].replace(" ","")
+		L=[]
+		for j in range(1,len(order)):
+			L.append(int(order[j]))
+
+		orderList.append(L)
+
+	productList=[]
+	for i in range(len(orderList)):
+		for j in range(len(orderList[i])):
+			productList.append(orderList[i][j])
+	#--------------
+
+
+	#OK------------
+	#timeList est la liste des temps
+	#on a donc timeList=[[1,5,3,3],[5,1,3,2],[3,3,1,2],[3,2,2,1]] par exemple
+	timeList=[]
+	for i in range(len(movTime)):
+		time=movTime[i].replace(" ","")
+		L=[]
+		for j in range(len(time)):
+			L.append(int(time[j]))
+
+		timeList.append(L)
+	#--------------
+
+
+	#OK------------
+	#temps maximal dans le pire des cas, pour avoir un intervalle, sachant que temps conveyor est forcement plus grand que temps runners
+	maxTime=0
+	timeConvList=[]
+	for i in range(len(movTimeConv)):
+		time=movTimeConv[i]
+		timeConvList.append(int(time))
+
+
+	for j in range(len(orderList)):
+		for k in range(len(orderList[j])):
+			maxTime+=timeConvList[k]
+
+	maxTime = maxTime - (maxTime//4)
+	#--------------
+
+
+
+
 	solve()

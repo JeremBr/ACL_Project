@@ -43,3 +43,10 @@ D'autres clauses à faire:
 - Le runner quand il pose produit, il repart direct cet esclave, cest a dire IL EST TJRS ACTIF, il a pas moment de répis, il faut bien faire des clauses sur ca
 - Que tous les produits des orders soient acheminés
 
+
+---
+
+DONE:
+- Runners arrivent pas en même temps au même endroit
+- 
+

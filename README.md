@@ -25,7 +25,7 @@ On test toutes les possibilités pour runner i (et pour tous les runners, puis p
 
   - que ça n'arrive pas en même temps au point de packaging (fin du conveyor)
   
-  donc pour ça on utilise nos variables P_TC pour faire clauses : Λ(V(-O_P_TC,-O_p_TC))
+  donc pour ça on utilise nos variables O_P_TC pour faire clauses : Λ(V(-O_P_TC,-O_p_TC))
   
   Autrement dit que deux product different n'arrive pas à TC égale
   
@@ -45,4 +45,4 @@ On test toutes les possibilités pour runner i (et pour tous les runners, puis p
 DONE:
 - Runners arrivent pas en même temps au même endroit
 - Products bien arrivé au packaging area, normalement c bon
-
+- Que ca n'arrive pas en meme temps au packaging area

@@ -28,8 +28,6 @@ class Runner:
 
 
 
-
-
 # Creating variables
 
 def p(r,t,p):
@@ -71,17 +69,11 @@ def outputData(exemple):
 	#Not done because we don't have a nice solver
 
 
-
-
 def packaging_clauses(runnerList):
 	'''
 	Create the clauses, and return them as a list
 	'''
-
 	clausesList=[]
-
-
-
 
 	# (1) Try all possibilities
 
@@ -113,16 +105,8 @@ def packaging_clauses(runnerList):
 			allClausesProduct(index,newProductList)
 
 
-
-
-
 	for i in range(totalRunners):
 		allClausesProduct(i,productList)
-
-
-
-
-
 
 
 
@@ -149,8 +133,6 @@ def packaging_clauses(runnerList):
 						clausesList.append([-p(i+1,j,k+1),p(i+1,j+(timeList[k][l]),l+1)])
 
 	#--------------
-
-
 
 
 
@@ -185,10 +167,6 @@ def packaging_clauses(runnerList):
 	#--------------
 
 
-
-
-
-
 	print(len(clausesList))
 	return clausesList,productList,maxTime
 
@@ -201,8 +179,6 @@ def solve():
 	for i in range(totalRunners):
 		runnerList.append(Runner(i+1,int(runnersPos[i])))
 
-
-
 	clauses,productList,maxTime = packaging_clauses(runnerList)
 
 	#add clauses where the runners start
@@ -210,15 +186,12 @@ def solve():
 	# 	clauses.append([p(i+1,0,int(runnersPos[i]))])
 
 	sol = set(pycosat.solve(clauses))
-	
 
 	
-
 	def read_product(i,j):
 		for d in range(totalProducts):
 			if (p(i,j,d+1)-1000) in sol:
 				return d+1
-
 
 
 	def read_conveyor(i):
@@ -302,8 +275,6 @@ if __name__ == '__main__':
 
 	maxTime = maxTime - (maxTime//3)
 	#--------------
-
-
 
 
 	solve()

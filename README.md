@@ -1,5 +1,8 @@
 # ACL_Project
 
+ist1101360 - Jérémy Breton
+ist1101618 - Marc Traverso
+
 ## How does it work?
 
 R_T_P and P_TC : are our special set of constraints 

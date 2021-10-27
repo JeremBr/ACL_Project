@@ -4,13 +4,12 @@ import pycosat
 #ATTENTION JAI MIS ACCENTS DANS LES COMMENTAIRES CA PEUT POSER SOUCIS (donc suppr les commentaires si bug UTF-8)
 
 
-#je sais pas si utilité au final, mais ya moy que ca soit utile
+
 class Runner:
 	def __init__(self,runner,initPos):
 		self.set_runner(runner)
 		self.set_time(0)
 		self.set_pos(initPos)
-		self.set_cost(0)
 
 	def get_runner(self):
 		return self.__runner
@@ -30,11 +29,6 @@ class Runner:
 	def set_pos(self,pos):
 		self.__pos=pos
 
-	def get_cost(self):
-		return self.__cost
-
-	def set_cost(self,cost):
-		self.__cost=cost
 
 
 
@@ -42,13 +36,12 @@ class Runner:
 #CE QUI PERMET DE DEFINIR VARIABLES
 #ATTENTION SI ON RAJOUTE UN PARAMETRE AUX VARIABLES IL FAUT MODIF PARTOUT DANS LE CODE
 def p(r,t,p):
-	return r*totalRunners + t + p*totalProducts 
+	return r*totalRunners + p*totalProducts +t + 1000
 	#CEST PTET PAS LES BONS CALCULS DE POSSIBILITES
 
-def v(o,p,tc):
-	return o*totalOrders+p*totalProducts + tc +1000
-	#CEST PTET PAS LES BONS CALCULS DE POSSIBILITES
-	#JAI RAJOUTE 1000 POUR PAS QUE CA SE CROISE avec les vars de runners
+def v(p,tc):
+	return p*totalProducts +tc
+
 
 
 
@@ -93,7 +86,7 @@ def outputData(exemple):
 
 
 
-def packaging_clauses():
+def packaging_clauses(runnerList):
 	'''
 	Create the clauses, and return them as a list
 	'''
@@ -112,6 +105,11 @@ def packaging_clauses():
 			L.append(int(order[j]))
 
 		orderList.append(L)
+
+	productList=[]
+	for i in range(len(orderList)):
+		for j in range(len(orderList[i])):
+			productList.append(orderList[i][j])
 	#--------------
 
 
@@ -152,49 +150,46 @@ def packaging_clauses():
 
 
 
-	# 1) On test toutes les possibilites pour runner 1
 
-	# on prend le runner 1 et on le fait choisir d'aller a un des endroits parmis les products a livrer
-	# donc 1_1_1 ou 1_5_2 ou 1_3_3 ou 1_3_4 par exemple
-	# il faut donc calculer T quand il aura mis le product sur le conveyor
-	# T = T_prec + Ti,j
-
-
+	# 1) On ecrit toutes les possib
 
 	
-	firstR=runnerList[0]
-	present=[]
 
-	for j in range(len(orderList)):
-		for k in range(len(orderList[j])):
-			product=orderList[j][k]
+	def allClausesProduct(index,product_list):
 
-			if product not in present:
-				L=orderList
-				del L[j][k]
-				present.append(product)
-				last_pos=firstR.get_pos()
-				time=firstR.get_time()
+		actualRunner=runnerList[index]
 
-				clausesList.append([-p(firstR.get_runner(),(firstR.get_time()+timeList[last_pos][product]),product),v(j,product,(time+timeConvList[product-1]))])
+		for j in range(len(product_list)):
 
-			#FINIR CA
+			product=product_list[j]
+			last_pos=actualRunner.get_pos()
+			time=actualRunner.get_time()
 
+			newTime=(time+timeList[last_pos-1][product-1])
+			newPos=product
+			if(newTime>maxTime):
+				continue
 
+			clausesList.append([-p(index+1,newTime,newPos),v(newPos,(newTime+timeConvList[product-1]))])
+			actualRunner.set_time(newTime)
+			actualRunner.set_pos(newPos)
 
+			newProductList=product_list[:j]+product_list[j+1:len(product_list)]
 
+			if(newProductList==[]):
+				continue
 
-
-		
-
-
-
-
+			allClausesProduct(index,newProductList)
 
 
 
+	for i in range(totalRunners):
+		allClausesProduct(i,productList)
 
 
+
+
+			
 
 
 
@@ -246,12 +241,13 @@ def packaging_clauses():
 	for i in range(len(orderList)):
 		for j in range(len(orderList[i])):
 			L=[]
-			for k in range(maxTime): #mettre valeure plus grande?
-				L.append(v(i+1,orderList[i][j],k))
+			for k in range(maxTime):
+				L.append(v(orderList[i][j],k+1))
 
 			clausesList.append(L)
 
 	# nombre de produit à package (exemple 1: 5 clauses)
+	# PEUT ETRE RAJOUTER CE QUE JAI VU AVEC PROF
 	#--------------
 
 
@@ -260,15 +256,15 @@ def packaging_clauses():
 	# x) Que ca n'arrive pas en meme temps au point de packaging area
 	for i in range(len(orderList)):
 		for j in range(1,len(orderList[i])):
-			for k in range(maxTime): #mettre valeure plus grande?
-				clausesList.append([-v(i+1,orderList[i][j-1],k),-v(i+1,orderList[i][j],k)])
+			for k in range(maxTime):
+				clausesList.append([-v(orderList[i][j-1],k+1),-v(orderList[i][j],k+1)])
 
 	# nombre de produit à package * T (exemple 1 : (3-1 + 2-1)*9=27 clauses)
 	#--------------
 
 
-
-	return clausesList
+	print(len(clausesList))
+	return clausesList,productList,maxTime
 
 
 
@@ -277,23 +273,59 @@ def solve():
 	#create Runners
 	runnerList=[]
 	for i in range(totalRunners):
-		runnerList.append(Runner(i+1,runnersPos[i]))
+		runnerList.append(Runner(i+1,int(runnersPos[i])))
 
 
 
-	clauses = packaging_clauses()
-
+	clauses,productList,maxTime = packaging_clauses(runnerList)
 
 	#rajouter clause en fonction de où sont les runners
-	#for i in range(totalRunners):
-		#clauses.append([p(i+1,0,runnersPos[i],0)])
+	# for i in range(totalRunners):
+	# 	clauses.append([p(i+1,0,int(runnersPos[i]))])
+
+	sol = set(pycosat.solve(clauses))
+	
+
+	#Il va ptet falloir faire un test quand on a plusieurs product
+
+	def read_product(i,j):
+		for d in range(totalProducts):
+			if (p(i,j,d+1)-1000) in sol:
+				return d+1
 
 
 
-	#sol = set(pycosat.solve(clauses))
+	def read_conveyor(i):
+		for t in range(maxTime):
+			if (v(i,t)) in sol:
+				return t
 
 
-	#def read_jsp():
+
+
+	runnersMov=[]
+	for i in range(totalRunners):
+		for j in range(maxTime):
+			prd=read_product(i+1,j+1)
+			if prd!=None:
+				runnersMov.append([i+1,j,prd])
+
+
+	conveyorMov=[]
+	for i in range(len(productList)):
+		conv=read_conveyor(i+1)
+		if conv!=None:
+			conveyorMov.append([i+1,conv])
+
+
+	print(runnersMov)
+	print(conveyorMov)
+
+
+
+
+
+
 
 
 

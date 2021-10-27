@@ -13,7 +13,7 @@ R_T_P and P_TC : are our special set of constraints
 
 ## Importants aspects of this project:
 
-	- (1): Big implementation with all Possibilities
+	- (1): If a product task is done, then it will be on the conveyor
 
 	- (2): Everytime we path the way for a runner, we must check that no one is already there, and especially that no one is putting a product at the conveyor at the same place, otherwise a conflict can happen.
 
@@ -26,7 +26,7 @@ R_T_P and P_TC : are our special set of constraints
 
 ## Clauses
 
-- (1): ΛΛΛ(R_T_P V p_TC)  For all R, For all P, and TC=T+Ti,j
+- (1): ΛΛΛ(-R_T_P V p_TC)  For all R, For all P, and TC=T+Ti,j
 - (2): Λ(-(R_T_P) V -(r_T_P))  For all T, For all P, R from 1 to number of Runners
 - (3): ΛΛΛ(R_T_P -> R_t_p) For all R,T and t=T+(time from P to p)
 - (4): Λ(-(P_T) V -(p_T)  (if 2 products arrive at same time) For all T

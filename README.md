@@ -20,7 +20,7 @@ We test every possibility for each runner "i"
 
 ---
 
-##3 importants aspects of this project:
+## 3 importants aspects of this project:
 
 	- everytime we path the way for a runner, we must check that no one is already there, and especially that no one is putting a product at the conveyor at the same place, otherwise a conflict can happen.
 

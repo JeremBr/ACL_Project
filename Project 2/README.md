@@ -12,7 +12,7 @@ Variables: X__R_T_P, A__R_T and Y__TC_P
 
 - The variable A is the activity of a runner "R" at time "T". If he is active or not.
 
-- The variable Y represents when a product P arrives at the packaging area at time TC (TC=T+C, time he is placed on the conveyor + time to arrives).
+- The variable Y represents when a product P arrives at the packaging area at time TC (TC=T+C, time when it's placed on the conveyor + time to arrives).
 
 ---
 

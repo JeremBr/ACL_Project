@@ -49,3 +49,6 @@ Variables: X__R_T_P, A__R_T and Y__TC_P
 ## Complexity
 
 
+## TO DO:
+- check si ya pas d'erreur
+- qu'il manque pas de clauses avec Y car c'est bizarre, j'ai limpression c'est jamais déposé

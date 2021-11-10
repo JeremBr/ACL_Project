@@ -19,7 +19,7 @@ Variables: X__R_T_P, A__R_T and Y__TC_P
 
 ## Importants aspects of this project:
 
-    - (1): We have to make sure that two runners are not at the same position at time T.
+    - (1): We have to make sure that two runners are not at the same position at time t.
   
     - (2): We also have to check that a runner doesn't have a task between two tasks. If he is running from position p at time t to position q, he can't be at any position between t and t+t_pq.
     
@@ -37,6 +37,13 @@ Variables: X__R_T_P, A__R_T and Y__TC_P
 
 ## Clauses:
 
+![img1](clauses/1.png)
+![img2](clauses/2.png)
+![img3](clauses/3.png)
+![img4](clauses/4.png)
+![img5](clauses/5.png)
+![img6](clauses/6.png)
+![img7](clauses/7.png)
 
 
 

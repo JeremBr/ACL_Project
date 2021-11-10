@@ -81,13 +81,6 @@ Variables: X__R_T_P, A__R_T and Y__TC_P
 
 ### (8):
 
+![img8](clauses/8.png)
 
 
-
-
-## Complexity
-
-
-## TO DO:
-- check si ya pas d'erreur
-- qu'il manque pas de clauses avec Y car c'est bizarre, j'ai limpression c'est jamais déposé

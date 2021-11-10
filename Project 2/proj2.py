@@ -1,5 +1,6 @@
 import fileinput
-from z3 import Solver, Bool, Or, And, Not, AtMost, AtLeast
+
+from z3 import Solver, Bool, Or, And, Not, AtMost, AtLeast, Then, With, is_true, sat
 
 
 
@@ -28,7 +29,8 @@ def getData():
 
 def solve():
 
-    s = Solver()
+    #s = Solver()
+    s=Then(With('simplify', arith_lhs=True, som=True), 'normalize-bounds', 'lia2pb', 'pb2bv', 'bit-blast', 'sat').solver()
 
 
     # VARIABLES :
@@ -44,7 +46,7 @@ def solve():
     A = [ [ Bool("a_%s_%s" % (i+1, j)) for j in range(maxTime+1) ] for i in range(totalRunners) ] #TIME: [0,T] donc maxTime+1 values
 
     #Y__TC_P
-    Y = [ [ Bool("y_%s_%s" % (i, j+1)) for j in range(totalProducts) ] for i in range(maxTime+1) ]  #TIME: [0,T] donc maxTime+1 values
+    Y = [ [ Bool("y_%s_%s" % (i, j+1)) for j in range(totalProducts) ] for i in range(maxTime+1) ]  #TIME: [0,T] donc maxTime values #METTRE [1,T] ?
 
     
 
@@ -70,20 +72,18 @@ def solve():
 
     noTaskBetween=[]
     for i in range(totalRunners):
-        for j in range(maxTime):
+        for j in range(1,maxTime+1):
             for k in range(totalProducts):
                 for l in range(totalProducts):
                     timeBetweenKandL=timeList[k][l]
 
-                    if(j+timeBetweenKandL<maxTime): #to not get an "index out of range" # <=
+                    if(j+timeBetweenKandL<=maxTime): #attention
                         for m in range(totalProducts):
                             for n in range(j+1,j+timeBetweenKandL):
                                 noTaskBetween.append(Or(Not(X[i][j][k]),Not(X[i][j+timeBetweenKandL][l]),Not(X[i][n][m])))
 
     
     #peux etre que cest mal implem
-    #et ptet prb au niveau TIME intervalle            
-    #print(noTaskBetween)
 
 
 
@@ -105,50 +105,51 @@ def solve():
 
 
 
-    # (x): If a runner is inactive at time t, then he is inactive at time k+1.
+    # (5): If we have a runner inactive at time t it implies that he is inactive at t+1.
     inactive=[]
     for i in range(totalRunners):
-        for j in range(maxTime):
-            inactive.append(Or(A[i][j],Not(A[i][j+1])))
+        for j in range(1,maxTime+1):
+            if(not(j+1 > maxTime)):
+                inactive.append(Or(A[i][j],Not(A[i][j+1])))
 
     
 
-    # (x): If a runner is active at time t, then all others runners must be active at time t/2.
+    # (6): All runners must have a timespan of at least 50% of the maximum. So, for a runner active at time t, all others runners must be active at t/2.
 
     activityRunner=[]
     for i in range(totalRunners):
-        for j in range(1,maxTime):
+        for j in range(1,maxTime+1):
             for k in range(totalRunners):
                 if k!=i:
                     activityRunner.append(Or(Not(A[i][j]),A[k][j//2])) #ptet prb ici avec //2
 
     
 
-    # (x): If a runner is at a given position, then then it must move to another position or he becomes inactive.
+    # (4): We have to make sure that every runners stay active without taking any pauses. It means that a runner must move to another position or he becomes inactive.
 
     noBreak=[]
-    for i in range(totalRunners):
-        for j in range(maxTime+1): # [0,T]
-            for k in range(totalProducts):
+    for r in range(totalRunners):
+        for t in range(maxTime+1): # [0,T]
+            for p in range(totalProducts):
 
-                #if j+1 <= maxTime
+                if(not(t+1 > maxTime)):
 
-                L=[Not(X[i][j][k]),Not(A[i][j])]
+                    L=[Not(X[r][t][p]),Not(A[r][t+1])]
 
-                for l in range(totalProducts):
-                    if(j+timeBetweenKandL<maxTime):
-                        timeBetweenKandL=timeList[k][l]
-                        L.append(X[i][j+timeBetweenKandL][l])
+                    for l in range(totalProducts):
+                        if(j+timeBetweenKandL<=maxTime):
+                            timeBetweenKandL=timeList[k][l]
+                            L.append(X[i][j+timeBetweenKandL][l])
 
-                noBreak.append(Or(L))
+                    noBreak.append(Or(L))
 
 
 
-    # (x): If a product p arrives at time t, then a runner must be at position p at time t-c_p.
+    # (7): We have to check that a runner was at position p at time t-c_p when a product p arrives at the packaging area at time t.
 
     productOnConveyor=[]
     for i in range(totalProducts):
-        for j in range(1,maxTime):
+        for j in range(1,maxTime+1):
 
             conveyorTime=timeConvList[i]
             if((j-conveyorTime) > 0): # >=0
@@ -164,7 +165,8 @@ def solve():
     #print(productOnConveyor)
 
 
-    # (x): All products must arrive at the packaging area
+    #PROBLEME ICI
+    # (8): All products must arrive at the packaging area.
     for i in range(len(orderList)):
         order=orderList[i]
         count=len(order)
@@ -182,15 +184,15 @@ def solve():
 
 
 
-    ############### FAIRE FAIRE FAIRE FAIRE : REGARDER PHOTOS POUR VOIR LES INTERVALLES (TIME SURTOUT) QUE CE SOIT BON POUR TOUTES LES FONCTIONS AVEC LES BOUCLES FOR ETC
-
-
-
-
     # INITIALIZATIONS
 
+    #Runner Positions
     for i in range(totalRunners):
         s.add(X[i][0][int(runnersPos[i])-1] == True)
+
+    #Runner Activities
+    for i in range(totalRunners):
+        s.add(A[i][0]==False)
 
 
 
@@ -198,8 +200,12 @@ def solve():
 
     
     s.add(diffPos + noTaskBetween + inactive + activityRunner + productOnConveyor + noBreak + onePos)
-    print(s.check())
-    print(s.model())
+    if s.check() == sat:
+        m = s.model()
+        for x in m:
+            if is_true(m[x]):
+                print(x())
+    
 
 
 
@@ -256,7 +262,7 @@ if __name__ == '__main__':
         for k in range(len(orderList[j])):
             maxTime+=timeConvList[k]
 
-    maxTime = maxTime - (maxTime//3)
+    maxTime = maxTime - (maxTime//3) #//3
     #--------------
 
 

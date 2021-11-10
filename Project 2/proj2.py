@@ -29,9 +29,9 @@ def getData():
 
 def solve():
 
-    s = Solver()
-    #s=Then(With('simplify', arith_lhs=True, som=True), 'normalize-bounds', 'lia2pb', 'pb2bv', 'bit-blast', 'sat').solver()
-    #s=Optimize()
+    #s = Solver()
+    s=Then(With('simplify', arith_lhs=True, som=True), 'normalize-bounds', 'lia2pb', 'pb2bv', 'bit-blast', 'sat').solver()
+    
     
 
     # VARIABLES :
@@ -154,23 +154,60 @@ def solve():
 
 
                 productOnConveyor.append(Or(L))
-
-    #peux etre que cest mal implem            
+          
 
 
     # (8): All products must arrive at the packaging area.
-    for i in range(len(orderList)):
-        order=orderList[i]
-        count=len(order)
-        L=[]
+    # for i in range(len(orderList)):
+    #     order=orderList[i]
+    #     count=len(order)
+    #     L=[]
         
-        for j in range(1,maxTime+1):
-            for k in range(count):
-                L.append(Y[j][order[k]-1])
+    #     for j in range(1,maxTime+1):
+    #         for k in range(count):
+    #             L.append(Y[j][order[k]-1])
+
+    #     L.append(count)
+
+    #     s.add(And(AtMost(L),AtLeast(L)))
+
+    # (8): All products must arrive at the packaging area.
+    for i in range(1,totalProducts+1):
+        L=[]
+
+        count=0
+        for j in range(len(productList)):
+            if productList[j]==i:
+                count+=1
+
+        for t in range(1,maxTime+1):
+            L.append(Y[t][i-1])
+            
 
         L.append(count)
-
         s.add(And(AtMost(L),AtLeast(L)))
+
+
+
+    
+
+    # for i in range(1,totalProducts+1):
+    #     L=[]
+
+    #     count=0
+    #     for j in range(len(productList)):
+    #         if productList[j]==i:
+    #             count+=1
+
+
+    #     for r in range(totalRunners):
+    #         for t in range(maxTime+1):
+
+    #             L.append(X[r][t][i-1])
+
+    #     L.append(count)
+    #     s.add(And(AtMost(L),AtLeast(L)))
+
 
 
 
@@ -191,13 +228,56 @@ def solve():
 
     
     s.add(diffPos + noTaskBetween + inactive + activityRunner + productOnConveyor + noBreak + onePos)
-    if s.check() == sat:
-        m = s.model()
-        for x in m:
-            if is_true(m[x]):
-                print(x())
-    
+    # if s.check() == sat:
+    #     m = s.model()
+    #     for x in m:
+    #         if is_true(m[x]):
+    #             print(x())
 
+    s.check()
+    m = s.model()
+    formalize(s)
+    
+def formalize(s):
+    
+    m = s.model()
+    conveyortime=[]
+    if str(s.check()) == "sat":
+        maxTime = 0
+        for e in m:
+            if m[e] == True:
+                if int(str(e)[2]) > maxTime and str(e)[0 == "y"]:
+                    maxTime = int(str(e)[2])
+        print(maxTime)
+        for r in range(totalRunners):
+            counter = 0
+            tempList =[]
+            for e in m:
+                if m[e] == True:
+                    if str(e)[0] == "x" and int(str(e)[2]) == r+1:
+                        counter +=1
+                        tempList.append(str(e)[6])
+            print(counter, end = " ")
+            print(*tempList, sep = " ")            
+            
+             
+        for r in range(len(orderList)):
+            tempListProduct = []
+            templistTime= []
+            print(len(orderList[r]), end =" ")
+            for e in m:
+                if m[e] == True:
+                    if str(e)[0] == "y":
+                        for j in range(len(orderList[r])):
+                            if int(str(e)[2]) == orderList[r][j]:
+                                tempListProduct.append(int(str(e)[4]))
+                                templistTime.append(int(str(e)[2]) - timeConvList[int(str(e)[4])-1])
+            for i in range(len(tempListProduct)):
+                print(tempListProduct[i], end=":")
+                print(templistTime[i], end = " ") 
+            print("")
+    else:
+        print("UNSAT")
 
 
 

@@ -29,24 +29,22 @@ def getData():
 
 def solve():
 
-    #s = Solver()
-    s=Then(With('simplify', arith_lhs=True, som=True), 'normalize-bounds', 'lia2pb', 'pb2bv', 'bit-blast', 'sat').solver()
-
+    s = Solver()
+    #s=Then(With('simplify', arith_lhs=True, som=True), 'normalize-bounds', 'lia2pb', 'pb2bv', 'bit-blast', 'sat').solver()
+    #s=Optimize()
+    
 
     # VARIABLES :
 
-    #JE CROIS QUI A UN PRB AVEC LE MAXTIME CA ON A PAS LA VALEURE 0 DU COUP
-    #JE VIENS DE LIMPLEM DU COUP, ESTCE QUE C BON?
-    #CA FAIT DE 0 JUSQUA MAXTIME COMPRIS
 
     # X__R_T_P
-    X = [ [ [ Bool("x_%s_%s_%s" % (i+1, j, k+1)) for k in range(totalProducts)] for j in range(maxTime+1) ] for i in range(totalRunners) ] #TIME: [0,T] donc maxTime+1 values
+    X = [ [ [ Bool("x_%s_%s_%s" % (i+1, j, k+1)) for k in range(totalProducts)] for j in range(maxTime+1) ] for i in range(totalRunners) ] #TIME: [0,T]
 
     #A__R_T
-    A = [ [ Bool("a_%s_%s" % (i+1, j)) for j in range(maxTime+1) ] for i in range(totalRunners) ] #TIME: [0,T] donc maxTime+1 values
+    A = [ [ Bool("a_%s_%s" % (i+1, j)) for j in range(maxTime+1) ] for i in range(totalRunners) ] #TIME: [0,T] donc maxTime+1
 
     #Y__TC_P
-    Y = [ [ Bool("y_%s_%s" % (i, j+1)) for j in range(totalProducts) ] for i in range(maxTime+1) ]  #TIME: [0,T] donc maxTime values #METTRE [1,T] ?
+    Y = [ [ Bool("y_%s_%s" % (i, j+1)) for j in range(totalProducts) ] for i in range(maxTime+1) ]  #TIME: [1,T]
 
     
 
@@ -82,9 +80,6 @@ def solve():
                             for n in range(j+1,j+timeBetweenKandL):
                                 noTaskBetween.append(Or(Not(X[i][j][k]),Not(X[i][j+timeBetweenKandL][l]),Not(X[i][n][m])))
 
-    
-    #peux etre que cest mal implem
-
 
 
 
@@ -102,6 +97,23 @@ def solve():
 
     
 
+    # (4): We have to make sure that every runners stay active without taking any pauses. It means that a runner must move to another position or he becomes inactive.
+
+    noBreak=[]
+    for r in range(totalRunners):
+        for t in range(maxTime+1): # [0,T]
+            for p in range(totalProducts):
+
+                if(t+1 <= maxTime):
+                    L=[Not(X[r][t][p]),Not(A[r][t+1])]
+
+                    for l in range(totalProducts):
+                        timeBetweenPandL=timeList[p][l]
+
+                        if(t+timeBetweenPandL<=maxTime):
+                            L.append(X[r][t+timeBetweenPandL][l])
+
+                    noBreak.append(Or(L))
 
 
 
@@ -109,7 +121,7 @@ def solve():
     inactive=[]
     for i in range(totalRunners):
         for j in range(1,maxTime+1):
-            if(not(j+1 > maxTime)):
+            if(j+1 <= maxTime):
                 inactive.append(Or(A[i][j],Not(A[i][j+1])))
 
     
@@ -124,24 +136,6 @@ def solve():
                     activityRunner.append(Or(Not(A[i][j]),A[k][j//2])) #ptet prb ici avec //2
 
     
-
-    # (4): We have to make sure that every runners stay active without taking any pauses. It means that a runner must move to another position or he becomes inactive.
-
-    noBreak=[]
-    for r in range(totalRunners):
-        for t in range(maxTime+1): # [0,T]
-            for p in range(totalProducts):
-
-                if(not(t+1 > maxTime)):
-
-                    L=[Not(X[r][t][p]),Not(A[r][t+1])]
-
-                    for l in range(totalProducts):
-                        if(j+timeBetweenKandL<=maxTime):
-                            timeBetweenKandL=timeList[k][l]
-                            L.append(X[i][j+timeBetweenKandL][l])
-
-                    noBreak.append(Or(L))
 
 
 
@@ -162,10 +156,8 @@ def solve():
                 productOnConveyor.append(Or(L))
 
     #peux etre que cest mal implem            
-    #print(productOnConveyor)
 
 
-    #PROBLEME ICI
     # (8): All products must arrive at the packaging area.
     for i in range(len(orderList)):
         order=orderList[i]
@@ -173,13 +165,12 @@ def solve():
         L=[]
         
         for j in range(1,maxTime+1):
-            for k in range(len(order)):
+            for k in range(count):
                 L.append(Y[j][order[k]-1])
 
         L.append(count)
 
-        s.add(AtMost(L))
-        s.add(AtLeast(L))
+        s.add(And(AtMost(L),AtLeast(L)))
 
 
 
@@ -192,7 +183,7 @@ def solve():
 
     #Runner Activities
     for i in range(totalRunners):
-        s.add(A[i][0]==False)
+        s.add(A[i][0]==True)
 
 
 
@@ -262,7 +253,7 @@ if __name__ == '__main__':
         for k in range(len(orderList[j])):
             maxTime+=timeConvList[k]
 
-    maxTime = maxTime - (maxTime//3) #//3
+    maxTime = maxTime - (maxTime//3)
     #--------------
 
 

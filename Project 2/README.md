@@ -37,13 +37,51 @@ Variables: X__R_T_P, A__R_T and Y__TC_P
 
 ## Clauses:
 
+### (1): 
+
 ![img1](clauses/1.png)
+
+---
+
+### (2): 
+
 ![img2](clauses/2.png)
+
+---
+
+### (3):
+
 ![img3](clauses/3.png)
+
+---
+
+### (4):
+
 ![img4](clauses/4.png)
+
+---
+
+### (5):
+
 ![img5](clauses/5.png)
+
+---
+
+### (6):
+
 ![img6](clauses/6.png)
+
+---
+
+### (7):
+
 ![img7](clauses/7.png)
+
+---
+
+### (8):
+
+
 
 
 

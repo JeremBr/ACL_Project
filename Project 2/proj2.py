@@ -271,13 +271,13 @@ def formalize(s):
                         for j in range(len(orderList[r])):
                             if int((str(e).partition("_")[2].partition("_")[0])) == orderList[r][j]:
                                 tempListProduct.append(int((str(e).rpartition('_')[2])))
-                                templistTime.append(int((str(e).partition("_")[2].partition("_")[0])) - timeConvList[int(str(e)[4])-1])
+                                templistTime.append(int((str(e).partition("_")[2].partition("_")[0])) - timeConvList[int(str(e).rpartition('_')[2])-1])
             for i in range(len(tempListProduct)):
                 print(tempListProduct[i], end=":")
                 print(templistTime[i], end = " ") 
             print("")
     else:
-        print("UNSAT")    
+        print("UNSAT")       
           
 
 

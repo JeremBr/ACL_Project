@@ -246,17 +246,17 @@ def formalize(s):
         maxTime = 0
         for e in m:
             if m[e] == True:
-                if int(str(e)[2]) > maxTime and str(e)[0 == "y"]:
-                    maxTime = int(str(e)[2])
+                if int((str(e).partition("_")[2].partition("_")[0])) > maxTime and str(e)[0 == "y"]:
+                    maxTime = int((str(e).partition("_")[2].partition("_")[0]))
         print(maxTime)
         for r in range(totalRunners):
             counter = 0
             tempList =[]
             for e in m:
                 if m[e] == True:
-                    if str(e)[0] == "x" and int(str(e)[2]) == r+1:
+                    if str(e)[0] == "x" and int((str(e).partition("_")[2].partition("_")[0])) == r+1:
                         counter +=1
-                        tempList.append(str(e)[6])
+                        tempList.append(str(e).rpartition('_')[2])
             print(counter, end = " ")
             print(*tempList, sep = " ")            
             
@@ -269,15 +269,16 @@ def formalize(s):
                 if m[e] == True:
                     if str(e)[0] == "y":
                         for j in range(len(orderList[r])):
-                            if int(str(e)[2]) == orderList[r][j]:
-                                tempListProduct.append(int(str(e)[4]))
-                                templistTime.append(int(str(e)[2]) - timeConvList[int(str(e)[4])-1])
+                            if int((str(e).partition("_")[2].partition("_")[0])) == orderList[r][j]:
+                                tempListProduct.append(int((str(e).rpartition('_')[2])))
+                                templistTime.append(int((str(e).partition("_")[2].partition("_")[0])) - timeConvList[int(str(e)[4])-1])
             for i in range(len(tempListProduct)):
                 print(tempListProduct[i], end=":")
                 print(templistTime[i], end = " ") 
             print("")
     else:
-        print("UNSAT")
+        print("UNSAT")    
+          
 
 
 

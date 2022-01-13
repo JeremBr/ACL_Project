@@ -22,7 +22,7 @@ p { task(I, J, K) : runner(I), time(J), product(K) } r*t*p.
 
 %1 { activity(I, J) : runner(I), time(J) } r*t. %change LB later
 
-%p { arrives(I,J) : time(I), product(J) } p.
+p { arrives(I,J) : time(I), product(J) } p.
 
 
 
@@ -70,6 +70,6 @@ p { task(I, J, K) : runner(I), time(J), product(K) } r*t*p.
 
 %-------------------------------
 % (8): All products must arrive at the packaging area.
-%:- #sum{ arrives(T,_) }!= p. %wrong
+:- count{ arrives(T,X) : time(T), product(X) }!=p.
 % que arrives soit true peut importe T et qui en ait un nombre egal au nombre de produit
 %-------------------------------

@@ -53,13 +53,13 @@ p { arrives(I,J) : time(I), product(J) } p.
 % (4): We have to make sure that every runners stay active without taking any pauses. It means that a runner must move to another position or he becomes inactive.
 %-------------------------------
 
-:- not activity(R,T), not task(R,T,P).
+:- activity(R,T), task(R,T,P).
 
 :- task(R,T,P), task(R,T+1,P), activity(R,T+1).
 
 %-------------------------------
 % (5): If we have a runner inactive at time t it implies that he is inactive at t+1.
-:- not activity(R, T), not activity(R, T+1).
+:- activity(R, T), activity(R, T+1).
 
 
 % (6): All runners must have a timespan of at least 50% of the maximum. So, for a runner active at time t, all others runners must be active at t/2.
@@ -67,7 +67,6 @@ p { arrives(I,J) : time(I), product(J) } p.
 
 
 % (7): We have to check that a runner was at position p at time t-c_p when a product p arrives at the packaging area at time t.
-
 
 
 %-------------------------------

@@ -6,18 +6,41 @@ ist1101618 - Marc Traverso
 
 ## How does it work?
 
-Variables: X__R_T_P, A__R_T and Y__TC_P
+python main.py < instances/enunciado1.wps > output.out
+./wps-checker instances/enunciado1.wps output.out
 
-- The variable X is the task for a runner "R" at the position "P" at time "T".
+close to be OK : when the output is close of the expected one, but it's not
+never end : when it doesn't end in less than one or two minutes, in a correct computational time
 
-- The variable A is the activity of a runner "R" at time "T". If he is active or not.
+instances/enunciado1.wps - OK
+instances/enunciado2.wps - OK
+instances/t_2_3_5_5_4.wps - close to be OK
+instances/t_2_3_10_2_2.wps - never end
+instances/t_2_3_10_3_2.wps - never end
+instances/t_2_3_10_5_2.wps - never end
+instances/t_2_3_10_5_4.wps - never end
+instances/t_2_7_4_4_5.wps - close to be OK
+instances/t_3_5_10_5_4.wps - never end
+instances/t_3_5_10_10_4.wps - never end
+instances/t_3_7_4_4_5.wps - close to be OK
+instances/t_5_7_4_4_5.wps - close to be OK
 
-- The variable Y represents when a product P arrives at the packaging area at time TC (TC=T+C, time when it's placed on the conveyor + time to arrives).
+## Logics
+
+Main logic: task(R,T,P,O), activity(R,T), arrive(P,TC)
+
+- The task for a runner "R" at the position "P" for the order "O" at time "T".
+
+- The activity of a runner "R" at time "T". If he is active or not.
+
+- When a product "P" arrives at the packaging area at time "TC" (TC=T+C, time T when it's placed on the conveyor + time C to arrives).
 
 ---
 
 
 ## Importants aspects of this project:
+
+    - (0): Products MUST be achieved
 
     - (1): We have to make sure that two runners are not at the same position at time t.
   
@@ -27,15 +50,18 @@ Variables: X__R_T_P, A__R_T and Y__TC_P
     
     - (4): We have to make sure that every runners stay active without taking any pauses. It means that a runner must move to another position or he becomes inactive.
     
-    - (5): If we have a runner inactive at time t it implies that he is inactive at t+1.
+    - (5): A runner active at T, must be active before
     
     - (6): All runners must have a timespan of at least 50% of the maximum. So, for a runner active at time t, all others runners must be active at t/2.
     
-    - (7): We have to check that a runner was at position p at time t-c_p when a product p arrives at the packaging area at time t.
+    - (7): We have to check that two products doesnt arrive at the same time at the packaging area.
     
-    - (8): All products must arrive at the packaging area.
 
 ## Clauses:
+
+### (0):
+
+![img8](clauses/8.png)
 
 ### (1): 
 
@@ -79,8 +105,6 @@ Variables: X__R_T_P, A__R_T and Y__TC_P
 
 ---
 
-### (8):
 
-![img8](clauses/8.png)
 
 
